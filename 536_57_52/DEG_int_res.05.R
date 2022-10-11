@@ -82,3 +82,28 @@ library(dittoSeq)
 pdf("int_freq_tnt.pdf")
 dittoBarPlot(int, var="integrated_snn_res.0.5", group.by = "tnt")
 dev.off()
+
+# % par cluster etgroupé par traitement
+t = table(int$integrated_snn_res.0.5, int$tnt)
+df = data.frame("cluster" = sort(unique(int$integrated_snn_res.0.5)))
+for (c in colnames(t)){
+	cond_name = paste("pc_", c, sep="")
+	df[, cond_name] = round(t[, c]/sum(t[, c]) * 100 , 2)
+	}
+
+library(gridExtra)
+library(cowplot)
+tbl = tableGrob(df)
+p_table = ggplot() + annotation_custom(tbl)
+
+d = dittoBarPlot(int, var="integrated_snn_res.0.5", group.by = "tnt")
+
+pdf("pc_tnt.pdf", width = 10, height = 12)
+plot_grid(d, p_table, nrow = 2)
+dev.off()
+
+
+
+
+
+
